@@ -3,17 +3,23 @@ Bot.register("rob-bot", function(game_state, player_state, move) {
     var them = game_state.them;
     var board = game_state.board;
     var safe_dirs = board.safe_directions(me)
-    if (!me.hasOwnProperty('partitiontop')) {
-        me.partitiontop = false;
-        me.partitionbot = false;
-    }
-    if (me.y == 0 || ((me.y < board.height / 2) && (me.x == 0 || me.x == board.width - 1))) {
-        me.partitiontop = true;
-        me.lefttop = me.x < them.x;
-    }
-    if (me.y == board.height - 1 || ((me.y >= board.height / 2) && (me.x == 0 || me.x == board.width - 1))) {
-        me.partitionbot = true;
-        me.leftbot = me.x < them.x;
+    me.partitiontop = false;
+    me.partitionbot = false;
+    me.lefttop = false;
+    me.leftbot = false;
+    for (i = 0; i < board.width; i += 1) {
+        if (board.get_hex_at({x:i, y:0}).color == me.color) {
+            me.partitiontop = true;
+            if (me.x < i) {
+                me.lefttop = true;
+            }
+        }
+        if (board.get_hex_at({x:i, y:height-1}).color == me.color) {
+            me.partitionbot = true;
+            if (me.x < i) {
+                me.leftbot = true;
+            }
+        }
     }
     if (!me.partitionbot && !me.partitiontop) {    
         if (them.last_move - 3 < 0 && me.y <= 0) {
@@ -41,45 +47,45 @@ Bot.register("rob-bot", function(game_state, player_state, move) {
     } else {
         if (me.y < board.height / 2) {
             if (me.lefttop) {
-                if (1 in safe_dirs) {
+                if (safe_dirs.contains(1)) {
                     move(1);
-                } else if ((me.y + 1 < board.height / 2) && (4 in safe_dirs)) {
+                } else if ((me.y + 1 < board.height / 2) && safe_dirs.contains(4)) {
                     move(4);
-                } else if (2 in safe_dirs) {
+                } else if (safe_dirs.contains(2)) {
                     move(2);
-                } else if (3 in safe_dirs) {
+                } else if (safe_dirs.contains(3)) {
                     move(3);
                 }
             } else {
-                if (1 in safe_dirs) {
+                if (safe_dirs.contains(1)) {
                     move(1);
-                } else if ((me.y + 1 < board.height / 2) && (4 in safe_dirs)) {
+                } else if ((me.y + 1 < board.height / 2) && safe_dirs.contains(4)) {
                     move(4);
-                } else if (0 in safe_dirs) {
+                } else if (safe_dirs.contains(0)) {
                     move(0);
-                } else if (5 in safe_dirs) {
+                } else if (safe_dirs.contains(5)) {
                     move(5);
                 }
             }
         } else {
             if (me.leftbot) {
-                if (4 in safe_dirs) {
+                if (safe_dirs.contains(4)) {
                     move(4);
-                } else if ((me.y - 1 >= board.height / 2) && (1 in safe_dirs)) {
+                } else if ((me.y - 1 >= board.height / 2) && (safe_dirs.contains(1))) {
                     move(1);
-                } else if (2 in safe_dirs) {
+                } else if (safe_dirs.contains(2)) {
                     move(2);
-                } else if (3 in safe_dirs) {
+                } else if (safe_dirs.contains(3)) {
                     move(3);
                 }
             } else {
-                if (4 in safe_dirs) {
+                if (safe_dirs.contains(4)) {
                     move(4);
-                } else if ((me.y - 1 >= board.height / 2) && (1 in safe_dirs)) {
+                } else if ((me.y - 1 >= board.height / 2) && (safe_dirs.contains(1))) {
                     move(1);
-                } else if (0 in safe_dirs) {
+                } else if (safe_dirs.contains(0)) {
                     move(0);
-                } else if (5 in safe_dirs) {
+                } else if (safe_dirs.contains(5)) {
                     move(5);
                 }
             }
